@@ -6,6 +6,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class Util {
 
@@ -38,12 +39,13 @@ public class Util {
         executeCommands(commands);
     }
 
-    public void runServerLogic(ProxyServer proxyServer, CommandsRunner commandsRunner) {
+    public void runServerLogic(ProxyServer proxyServer, CommandsRunner commandsRunner, Logger logger) {
         // If there are more than 0 players online, the server should be running.
         // If there is less than 1, that means that we can shut down.
         if (!isEnoughPlayers(proxyServer)) {
             runShutdownCommands();
             GlobalState.setState(State.SHUTTINGDOWN);
+            logger.info("Stopped backend due to player inactivity.");
 
             // It shouldn't take more than 20 seconds for the server to shut down
             // Meaning we can set its tate to stopped
@@ -56,7 +58,7 @@ public class Util {
         }
     }
 
-    public void startServer(ProxyServer proxyServer, CommandsRunner commandsRunner) {
+    public void startServer(ProxyServer proxyServer, CommandsRunner commandsRunner, Logger logger) {
         runStartupCommands();
         GlobalState.setState(State.STARTING);
 
@@ -66,6 +68,8 @@ public class Util {
                 .buildTask(commandsRunner, () -> GlobalState.setState(State.RUNNING))
                 .delay(20L, TimeUnit.SECONDS)
                 .schedule();
+
+        logger.info("Start server because someone tried to join.");
     }
 
 }
