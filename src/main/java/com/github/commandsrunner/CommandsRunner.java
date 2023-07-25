@@ -1,7 +1,6 @@
 package com.github.commandsrunner;
 
 import com.github.commandsrunner.utils.GlobalState;
-import com.github.commandsrunner.utils.State;
 import com.github.commandsrunner.utils.Util;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -16,25 +15,24 @@ import java.util.concurrent.TimeUnit;
 @Plugin(
         id = "commandsrunner",
         name = "CommandsRunner",
-        version = "1.0"
+        authors = "KoxSosen",
+        version = "1.1"
 )
 public class CommandsRunner {
 
     private final ProxyServer server;
-    private final Plugin plugin;
     private final Util util;
 
     @Inject
-    public CommandsRunner(ProxyServer server, Plugin plugin) {
+    public CommandsRunner(ProxyServer server) {
         this.server = server;
-        this.plugin = plugin;
         this.util = new Util();
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getScheduler()
-                .buildTask(plugin, () -> util.runServerLogic(server, plugin))
+                .buildTask(this, () -> util.runServerLogic(server, this))
                 .repeat(5L, TimeUnit.MINUTES)
                 .schedule();
     }
@@ -53,15 +51,13 @@ public class CommandsRunner {
                 // shutdown to finish. So, we set a delay of 40 seconds.
                 serverConnection.getPlayer().disconnect(Component.text("Server is shutting down, we will restart it for you shortly."));
                 server.getScheduler()
-                        .buildTask(plugin, () -> {
-                            util.startServer(server, plugin);
-                        })
+                        .buildTask(this, () -> util.startServer(server, this))
                         .delay(40L, TimeUnit.SECONDS)
                         .schedule();
                 break;
             case STOPPED:
                 serverConnection.getPlayer().disconnect(Component.text("Server is stopped, we are starting it for you."));
-                util.startServer(server, plugin);
+                util.startServer(server, this);
                 break;
             default:
                 break;

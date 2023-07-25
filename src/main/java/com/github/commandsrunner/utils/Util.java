@@ -1,6 +1,6 @@
 package com.github.commandsrunner.utils;
 
-import com.velocitypowered.api.plugin.Plugin;
+import com.github.commandsrunner.CommandsRunner;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class Util {
         executeCommands(commands);
     }
 
-    public void runServerLogic(ProxyServer proxyServer, Plugin plugin) {
+    public void runServerLogic(ProxyServer proxyServer, CommandsRunner commandsRunner) {
         // If there are more than 0 players online, the server should be running.
         // If there is less than 1, that means that we can shut down.
         if (!isEnoughPlayers(proxyServer)) {
@@ -48,7 +48,7 @@ public class Util {
             // It shouldn't take more than 20 seconds for the server to shut down
             // Meaning we can set its tate to stopped
             proxyServer.getScheduler()
-                    .buildTask(plugin, () -> GlobalState.setState(State.STOPPED))
+                    .buildTask(commandsRunner, () -> GlobalState.setState(State.STOPPED))
                     .delay(20L, TimeUnit.SECONDS)
                     .schedule();
         } else {
@@ -56,14 +56,14 @@ public class Util {
         }
     }
 
-    public void startServer(ProxyServer proxyServer, Plugin plugin) {
+    public void startServer(ProxyServer proxyServer, CommandsRunner commandsRunner) {
         runStartupCommands();
         GlobalState.setState(State.STARTING);
 
         // It shouldn't take more than 20 seconds for the server to start
         // Meaning we can set its tate to running
         proxyServer.getScheduler()
-                .buildTask(plugin, () -> GlobalState.setState(State.RUNNING))
+                .buildTask(commandsRunner, () -> GlobalState.setState(State.RUNNING))
                 .delay(20L, TimeUnit.SECONDS)
                 .schedule();
     }
