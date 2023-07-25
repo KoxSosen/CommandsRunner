@@ -61,7 +61,7 @@ public class Util {
         GlobalState.setState(State.STARTING);
 
         // It shouldn't take more than 20 seconds for the server to start
-        // Meaning we can set it's tate to running
+        // Meaning we can set its tate to running
         proxyServer.getScheduler()
                 .buildTask(plugin, () -> GlobalState.setState(State.RUNNING))
                 .delay(20L, TimeUnit.SECONDS)

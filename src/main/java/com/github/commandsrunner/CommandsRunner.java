@@ -54,7 +54,6 @@ public class CommandsRunner {
                 serverConnection.getPlayer().disconnect(Component.text("Server is shutting down, we will restart it for you shortly."));
                 server.getScheduler()
                         .buildTask(plugin, () -> {
-                            GlobalState.setState(State.STOPPED);
                             util.startServer(server, plugin);
                         })
                         .delay(40L, TimeUnit.SECONDS)
