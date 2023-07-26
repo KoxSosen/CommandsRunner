@@ -12,11 +12,8 @@ public class Util {
 
     public void executeCommands(List<String> commands) {
         for (String command : commands) {
-            final Process process;
             try {
-                process = Runtime.getRuntime().exec(command);
-                process.waitFor();
-                process.destroy();
+                Runtime.getRuntime().exec(command);
             } catch (Exception e) {
                 throw new RuntimeException("Issue executing command: " + e);
             }
