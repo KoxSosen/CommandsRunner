@@ -1,6 +1,7 @@
 package com.github.commandsrunner;
 
 import com.github.commandsrunner.utils.GlobalState;
+import com.github.commandsrunner.utils.State;
 import com.github.commandsrunner.utils.Util;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
@@ -37,8 +38,10 @@ public class CommandsRunner {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getScheduler()
-                .buildTask(this, () -> util.runServerLogic(server, this, logger))
-                .repeat(5L, TimeUnit.MINUTES)
+                .buildTask(this, () -> {
+                        util.runServerLogic(server, this, logger);
+                })
+                .repeat(1L, TimeUnit.HOURS)
                 .schedule();
     }
 
