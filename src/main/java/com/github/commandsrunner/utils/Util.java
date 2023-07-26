@@ -43,16 +43,21 @@ public class Util {
         // If there are more than 0 players online, the server should be running.
         // If there is less than 1, that means that we can shut down.
         if (!isEnoughPlayers(proxyServer)) {
-            runShutdownCommands();
-            GlobalState.setState(State.SHUTTINGDOWN);
-            logger.info("Stopped backend due to player inactivity.");
+            // Only shutdown if we are running
+            // If we are starting/shutting down, that means that someone tired to join, or we are still shutting down for some reason.
+            // Also, this avoids spamming requests, as if we are stopped, we don't need to stop anything again.
+            if (GlobalState.getState().equals(State.RUNNING)) {
+                runShutdownCommands();
+                GlobalState.setState(State.SHUTTINGDOWN);
+                logger.info("Stopped backend due to player inactivity.");
 
-            // It shouldn't take more than 20 seconds for the server to shut down
-            // Meaning we can set its tate to stopped
-            proxyServer.getScheduler()
-                    .buildTask(commandsRunner, () -> GlobalState.setState(State.STOPPED))
-                    .delay(20L, TimeUnit.SECONDS)
-                    .schedule();
+                // It shouldn't take more than 20 seconds for the server to shut down
+                // Meaning we can set its tate to stopped
+                proxyServer.getScheduler()
+                        .buildTask(commandsRunner, () -> GlobalState.setState(State.STOPPED))
+                        .delay(20L, TimeUnit.SECONDS)
+                        .schedule();
+            }
         } else {
             GlobalState.setState(State.RUNNING);
         }
