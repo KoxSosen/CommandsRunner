@@ -1,7 +1,6 @@
 package com.github.commandsrunner;
 
 import com.github.commandsrunner.utils.GlobalState;
-import com.github.commandsrunner.utils.State;
 import com.github.commandsrunner.utils.Util;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
@@ -9,7 +8,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -38,10 +36,8 @@ public class CommandsRunner {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getScheduler()
-                .buildTask(this, () -> {
-                        util.runServerLogic(server, this, logger);
-                })
-                .repeat(1L, TimeUnit.HOURS)
+                .buildTask(this, () -> util.runServerLogic(server, this, logger))
+                .repeat(5, TimeUnit.MINUTES)
                 .schedule();
     }
 
